@@ -6,6 +6,7 @@ import ProductView from './components/Product/ProductView.vue';
 import Home from './pages/Home.vue';
 import Wishlist from './pages/Wishlist.vue';
 import Cart from './pages/Cart.vue';
+import Comparison from './pages/Comparison.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/wishlist', component: Wishlist },
   { path: '/cart', component: Cart },
   { path: '/products', component: CardView },
+  { path: '/comparison', component: Comparison },
 ];
 </script>
 

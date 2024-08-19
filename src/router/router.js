@@ -5,6 +5,7 @@ import Login from '../pages/Login.vue';
 import Wishlist from '../pages/Wishlist.vue';
 import Cart from '../pages/Cart.vue';
 import Cardview from '../components/Card/Cardview.vue';
+import Comparison from '../pages/Comparison.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,7 +15,8 @@ const router = createRouter({
       { path: '/login', component: Login},
       { path: '/wishlist', component: Wishlist},
       { path: '/cart', component: Cart},
-      { path: '/products', component: Cardview}
+      { path: '/products', component: Cardview},
+      { path: '/comparison', component: Comparison}
 
   ]
 });
