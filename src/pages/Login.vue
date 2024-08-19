@@ -6,15 +6,15 @@
   
   function login() {
     fetch('https://fakestoreapi.com/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', // the method is defined so that the default 'GET method' isn't used. POST methods are used to send data
+      headers: { 'Content-Type': 'application/json' }, //the headers simply provide additional information such as the type of content, which in this case is json
       body: JSON.stringify({
         username: username.value,
         password: password.value,
       }),
     })
       .then(res => res.json())
-      .then(json => console.log(json))
+      .then(json => console.log(json)) //okay you console logged the token, but what do you want to do with it? set it to your local storage 
       .catch(err => console.error('Error:', err))
   }
   </script>
