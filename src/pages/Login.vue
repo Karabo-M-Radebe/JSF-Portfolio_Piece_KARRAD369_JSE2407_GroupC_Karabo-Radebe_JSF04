@@ -40,6 +40,12 @@
       .catch(err => {
         errorMessage.value = err.message || 'An error occurred during login'
       })
+      .finally(() => isLoading.value = false) // always hide the loading state after the request
+  }
+
+  function logout() {
+    localStorage.removeItem('token')
+        router.push('/') // redirect to home page after logout
   }
   </script>
 
