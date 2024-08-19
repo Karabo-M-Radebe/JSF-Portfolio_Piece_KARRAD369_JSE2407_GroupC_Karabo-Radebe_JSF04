@@ -11,6 +11,19 @@
   const errorMessage = ref('')
 
   
+  function validateInputs() {
+    if (!username.value || !password.value) {
+        errorMessage.value = 'Please enter both username and password'
+                return false
+          }
+          errorMessage.value = ''
+          return true;
+  }
+
+  function togglePasswordVisibility() {
+    showPassword.value =!showPassword.value
+  }
+
   function login() {
     isLoading.value = true
     fetch('https://fakestoreapi.com/auth/login', {
@@ -68,17 +81,18 @@
             <label class="block text-gray-700 mb-2" for="password">Password</label>
             <input
               v-model="password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               id="password"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
             />
           </div>
           <button
-            type="submit"
+            type="button"
+            @click="togglePasswordVisibility"
             class="w-full bg-indigo-500 text-white py-2 rounded hover:bg-indigo-600"
           >
-            Login
+            {{ showPassword ? 'Hide' : 'Show' }}
           </button>
         </form>
       </div>
