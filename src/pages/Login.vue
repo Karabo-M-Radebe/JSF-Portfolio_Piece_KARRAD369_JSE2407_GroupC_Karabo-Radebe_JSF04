@@ -1,8 +1,15 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { jwtDecode } from 'jwt-decode';
   
   const username = ref('')
   const password = ref('')
+  const showPassword = ref(false)
+  const isLoading = ref(false)
+  const router = useRouter()
+  const errormessage = ref('')
+
   
   function login() {
     fetch('https://fakestoreapi.com/auth/login', {
