@@ -8,10 +8,11 @@
   const showPassword = ref(false)
   const isLoading = ref(false)
   const router = useRouter()
-  const errormessage = ref('')
+  const errorMessage = ref('')
 
   
   function login() {
+    isLoading.value = true
     fetch('https://fakestoreapi.com/auth/login', {
       method: 'POST', // the method is defined so that the default 'GET method' isn't used. POST methods are used to send data
       headers: { 'Content-Type': 'application/json' }, //the headers simply provide additional information such as the type of content, which in this case is json
@@ -22,7 +23,23 @@
     })
       .then(res => res.json())
       .then(json => console.log(json)) //okay you console logged the token, but what do you want to do with it? set it to your local storage 
-      .catch(err => console.error('Error:', err))
+      .then(json => {
+        if (json.token) {
+            const decodedToken = jwtDecode(json.token)
+            localStorage.setItem('token', json.token) // set the token in local storage
+            const redirectTo = router.currentRoute.value.query.redirect || '/'
+            router.push(redirectTo) // redirect to the page you wanted to go to
+
+            username.value = ''
+            password.value = ''
+            errorMessage.value = ''
+        } else {
+            throw new Error ('Login failed. Please check your credentials.')
+        }
+      })
+      .catch(err => {
+        errorMessage.value = err.message || 'An error occurred during login'
+      })
   }
   </script>
 
