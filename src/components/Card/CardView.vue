@@ -6,7 +6,11 @@
         :selectedCategory="selectedCategory"
         @categoryChange="handleCategoryChange"
       />
-      <Sort />
+      <Sort 
+        :sortOptions="sortOptions"
+        :selectedSortOption="selectedSortOption"
+        @sortOptionChange="handleSortChange"
+      />
     </div>
     <div v-if="loading" class="grid justify-center">
       <div class="lg:max-h-[130rem] max-w-xl mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4">
@@ -120,101 +124,112 @@
   </div>
 </template>
   
-  <script>
-  import { ref, onMounted, computed, watch } from 'vue';
-  import CardSkeleton from './CardSkeleton.vue';
-  import Error from '../Error.vue';
-  import Filter from '../Filter.vue';
-  import Sort from '../Sort.vue';
-  import { useSortStore } from '../../stores/productStore';
-  
-  export default {
-    components: {
-      CardSkeleton,
-      Error,
-      Filter,
-      Sort,
-    },
-    setup() {
-      const sortStore = useSortStore();
-      const products = ref([]);
-      const filteredProducts = ref([]);
-      const loading = ref(true);
-      const error = ref(null);
-      const categories = ref([]);
-      const selectedCategory = ref('');
-  
-      const getProducts = async () => {
-        try {
-          let response = await fetch('https://fakestoreapi.com/products');
-          if (!response.ok) {
-            throw new Error("Failed to fetch products");
-          }
-          products.value = await response.json();
-          categories.value = [...new Set(products.value.map(product => product.category))];
-          filteredProducts.value = [...products.value];
-        } catch (err) {
-          error.value = err.message;
-        } finally {
-          loading.value = false;
-        }
-      };
-  
-      const getProductsByCategory = async (category) => {
-        try {
-          loading.value = true;
-          error.value = null;
-          let response = await fetch(`https://fakestoreapi.com/products/category/${category}`);
-          products.value = await response.json();
-          filteredProducts.value = [...products.value];
-        } catch (err) {
-          error.value = err.message;
-        } finally {
-          loading.value = false;
-        }
-      };
-  
-      const handleCategoryChange = (category) => {
-        selectedCategory.value = category;
-        if (selectedCategory.value) {
-          getProductsByCategory(selectedCategory.value);
-        } else {
-          getProducts();
-        }
-      };
-  
-      const handleSortChange = (option) => {
-        sortStore.setSortOption(option);
-      };
-  
-      watch(() => sortStore.getCurrentSort, (newSortOption) => {
-        if (newSortOption === 'lowToHigh') {
-          filteredProducts.value.sort((a, b) => a.price - b.price);
-        } else if (newSortOption === 'highToLow') {
-          filteredProducts.value.sort((a, b) => b.price - a.price);
-        } else {
-          filteredProducts.value = [...products.value];
-        }
-      });
-  
-      onMounted(() => {
-        getProducts();
-      });
-  
-      return {
-        products,
-        filteredProducts,
-        loading,
-        error,
-        categories,
-        selectedCategory,
-        selectedSort: computed(() => sortStore.getCurrentSort),
-        handleCategoryChange,
-        handleSortChange
-      };
+<script setup>
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import CardSkeleton from './CardSkeleton.vue';
+import Error from '../Error.vue';
+import Filter from '../Filter.vue';
+import Sort from '../Sort.vue';
+import { useSortStore } from '../../stores/productStore';
+
+// Set up reactive state and store
+const sortStore = useSortStore();
+const products = ref([]);
+const filteredProducts = ref([]);
+const loading = ref(true);
+const error = ref(null);
+const categories = ref([]);
+const selectedCategory = ref('');
+const router = useRouter();
+
+// Fetch products data
+const getProducts = async () => {
+  try {
+    const response = await fetch('https://fakestoreapi.com/products');
+    if (!response.ok) throw new Error('Failed to fetch products');
+    products.value = await response.json();
+    categories.value = [...new Set(products.value.map(product => product.category))];
+    filteredProducts.value = [...products.value];
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Fetch products by category
+const getProductsByCategory = async category => {
+  try {
+    loading.value = true;
+    error.value = null;
+    const response = await fetch(`https://fakestoreapi.com/products/category/${category}`);
+    products.value = await response.json();
+    filteredProducts.value = [...products.value];
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Handle category change
+const handleCategoryChange = category => {
+  selectedCategory.value = category;
+  if (selectedCategory.value) {
+    getProductsByCategory(selectedCategory.value);
+  } else {
+    getProducts();
+  }
+};
+
+// Handle sorting
+const handleSortChange = option => {
+  sortStore.setSortOption(option);
+};
+
+// Add to compare functionality
+const addToCompare = product => {
+  let compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
+  if (!compareProducts.some(item => item.id === product.id) && compareProducts.length < 5) {
+    compareProducts.push(product);
+    localStorage.setItem('compareProducts', JSON.stringify(compareProducts));
+    router.push('/comparison');
+  }
+};
+
+// Add to cart functionality
+const addToCart = product => {
+  let cartProducts = JSON.parse(localStorage.getItem('cartProducts')) || [];
+  let existingProduct = cartProducts.find(item => item.id === product.id);
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    cartProducts.push({ ...product, quantity: 1 });
+  }
+  localStorage.setItem('cartProducts', JSON.stringify(cartProducts));
+  router.push('/cart');
+};
+
+// Watch for sort changes
+watch(
+  () => sortStore.getCurrentSort,
+  newSortOption => {
+    if (newSortOption === 'lowToHigh') {
+      filteredProducts.value.sort((a, b) => a.price - b.price);
+    } else if (newSortOption === 'highToLow') {
+      filteredProducts.value.sort((a, b) => b.price - a.price);
+    } else {
+      filteredProducts.value = [...products.value];
     }
-  };
-  </script>
+  }
+);
+
+// Fetch products on component mount
+onMounted(() => {
+  getProducts();
+});
+</script>
   
   <style scoped>
   
