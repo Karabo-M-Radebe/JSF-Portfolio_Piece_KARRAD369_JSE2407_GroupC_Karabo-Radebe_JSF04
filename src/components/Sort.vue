@@ -1,12 +1,7 @@
 <script setup>
-  // import { defineProps } from 'vue';
   import { useSortStore } from '../stores/productStore';
 
-  // const props = defineProps({
-  //   onSortChange: { type: Function, required: true }
-  // });
-  
-const sortStore = useSortStore();
+  const sortStore = useSortStore();
   /**
    * this function handles the sorting of the products by targeting the value of the price  
    * @param event 

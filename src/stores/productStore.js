@@ -27,4 +27,3 @@ export const filterStore = defineStore("filter", {
         }
     }
 })
-
