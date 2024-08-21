@@ -14,6 +14,7 @@ export const useProductStore = defineStore('productStore', {
       currentSort: localStorage.getItem('currentSort') || 'default',
       category: null,
       sortOrder: 'asc',
+      notification: null, // State to hold the notification message
     };
   },
 
@@ -35,6 +36,7 @@ export const useProductStore = defineStore('productStore', {
           this.jwtToken = data.token;
           localStorage.setItem('jwtToken', data.token);
           this.isAuthenticated = true;
+          this.triggerNotification('Login successful!');
           const router = useRouter();
           router.push('/');
         } else {
@@ -43,6 +45,7 @@ export const useProductStore = defineStore('productStore', {
       } catch (error) {
         console.error('Error during login:', error);
         this.isAuthenticated = false;
+        this.triggerNotification('Login failed. Please check your credentials.');
       }
     },
 
@@ -50,6 +53,7 @@ export const useProductStore = defineStore('productStore', {
       this.jwtToken = null;
       localStorage.removeItem('jwtToken');
       this.isAuthenticated = false;
+      this.triggerNotification('You have logged out.');
       const router = useRouter();
       router.push('/login');
     },
@@ -60,6 +64,7 @@ export const useProductStore = defineStore('productStore', {
         this.products = await response.json();
       } catch (error) {
         console.error('Error fetching products:', error);
+        this.triggerNotification('Error fetching products. Please try again later.');
       }
     },
 
@@ -71,35 +76,41 @@ export const useProductStore = defineStore('productStore', {
         this.cart.push({ ...product, quantity: 1 });
       }
       this.updateLocalStorage('cart', this.cart);
+      this.triggerNotification('Product added to cart.');
     },
 
     removeFromCart(productId) {
       this.cart = this.cart.filter(item => item.id !== productId);
       this.updateLocalStorage('cart', this.cart);
+      this.triggerNotification('Product removed from cart.');
     },
 
     addToWishlist(product) {
       if (!this.wishlist.some(item => item.id === product.id)) {
         this.wishlist.push(product);
         this.updateLocalStorage('wishlist', this.wishlist);
+        this.triggerNotification('Product added to wishlist.');
       }
     },
 
     removeFromWishlist(productId) {
       this.wishlist = this.wishlist.filter(item => item.id !== productId);
       this.updateLocalStorage('wishlist', this.wishlist);
+      this.triggerNotification('Product removed from wishlist.');
     },
 
     addToCompare(product) {
       if (!this.compareProducts.some(item => item.id === product.id) && this.compareProducts.length < 5) {
         this.compareProducts.push(product);
         this.updateLocalStorage('compareProducts', this.compareProducts);
+        this.triggerNotification('Product added to comparison.');
       }
     },
 
     removeFromCompare(productId) {
       this.compareProducts = this.compareProducts.filter(item => item.id !== productId);
       this.updateLocalStorage('compareProducts', this.compareProducts);
+      this.triggerNotification('Product removed from comparison.');
     },
 
     setSortOption(option) {
@@ -122,7 +133,15 @@ export const useProductStore = defineStore('productStore', {
 
       const storedCompareProducts = JSON.parse(localStorage.getItem('compareProducts'));
       if (storedCompareProducts) this.compareProducts = storedCompareProducts;
-    }, 
+    },
+
+    // Trigger a notification
+    triggerNotification(message) {
+      this.notification = message;
+      setTimeout(() => {
+        this.notification = null;
+      }, 4000); // Notification disappears after 4 seconds
+    }
   },
 
   getters: {
