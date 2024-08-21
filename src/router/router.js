@@ -4,7 +4,7 @@ import ProductView from '../components/Product/ProductView.vue';
 import Login from '../pages/Login.vue';
 import Wishlist from '../pages/Wishlist.vue';
 import Cart from '../pages/Cart.vue';
-import Cardview from '../components/Card/Cardview.vue';
+// import Cardview from '../components/Card/Cardview.vue';
 import Comparison from '../pages/Comparison.vue';
 
 const router = createRouter({
