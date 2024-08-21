@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="container">
+      <div class="container relative justify-center gap-6">
         <Filter
           :categories="categories"
           :selectedCategory="selectedCategory"
@@ -190,37 +190,16 @@
   
   // Add to compare functionality
   const addToCompare = product => {
-    // let compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
-    // if (!compareProducts.some(item => item.id === product.id) && compareProducts.length < 5) {
-    //   compareProducts.push(product);
-    //   localStorage.setItem('compareProducts', JSON.stringify(compareProducts));
-    // }
     productStore.addToCompare(product);
   };
   
   // Add to cart functionality
   const addToCart = product => {
-    // let cartProducts = JSON.parse(localStorage.getItem('cartProducts')) || [];
-    // let existingProduct = cartProducts.find(item => item.id === product.id);
-    // if (existingProduct) {
-    //   existingProduct.quantity += 1;
-    // } else {
-    //   cartProducts.push({ ...product, quantity: 1 });
-    // }
-    // localStorage.setItem('cartProducts', JSON.stringify(cartProducts));
     productStore.addToCart(product);
   };
   
   // Toggle favourite
   const toggleFavourite = product => {
-    // let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    // const index = wishlist.findIndex(item => item.id === product.id);
-    // if (index !== -1) {
-    //   wishlist.splice(index, 1); // Remove from wishlist
-    // } else {
-    //   wishlist.push(product); // Add to wishlist
-    // }
-    // localStorage.setItem('wishlist', JSON.stringify(wishlist));
     productStore.addToWishlist(product),
     productStore.removeFromWishlist(product)
 
