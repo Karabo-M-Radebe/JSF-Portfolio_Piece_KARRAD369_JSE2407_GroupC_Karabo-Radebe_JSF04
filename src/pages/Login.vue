@@ -66,6 +66,7 @@ function logout() {
 </script>
 
 <template>
+  <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">back</button>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="bg-white p-6 rounded shadow-md w-full max-w-sm">
       <h1 class="text-2xl font-bold mb-4 text-center">Login Page</h1>

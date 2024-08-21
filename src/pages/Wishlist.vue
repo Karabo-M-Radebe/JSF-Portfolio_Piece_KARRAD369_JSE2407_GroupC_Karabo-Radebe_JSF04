@@ -40,6 +40,7 @@
 <template>
     <div>
       <div class="container relative justify-center">
+        <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">back</button>
         <Filter
           :categories="categories"
           :selectedCategory="selectedCategory"

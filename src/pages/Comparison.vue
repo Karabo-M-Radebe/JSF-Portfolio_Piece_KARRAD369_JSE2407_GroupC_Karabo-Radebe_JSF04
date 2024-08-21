@@ -73,6 +73,7 @@ const clearComparison = () => {
 <template>
   <div class="container mx-auto mt-5 p-5">
     <h1 class="text-2xl font-bold text-center mb-5">Product Comparison</h1>
+    <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">back</button>
     <div v-if="compareProducts.length === 0" class="text-center">
       <p>No products to compare.</p>
     </div>

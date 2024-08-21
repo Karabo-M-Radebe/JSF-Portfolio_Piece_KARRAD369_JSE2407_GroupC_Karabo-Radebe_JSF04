@@ -57,9 +57,7 @@ const addToCart = product => {
     <ProductSkeleton />
   </div>
   <div v-else class="grid m-10 space-y-5">
-    <a class="w-20px" href="/">
-      <button class="bg-gray-500 text-white py-2 px-4 rounded">back</button>
-    </a>
+    <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded">back</button>
     <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:max-w-6xl xl:max-w-7xl">
       <div class="mx-auto w-2/5 flex-none">
         <img :src="product.image" alt="" class="w-[85%] h-[85%]" />
