@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useProductStore } from "../stores/productStore";
 
 const productStore = useProductStore();
-const message = computed(() => store.notificationMessage);
+const message = computed(() => productStore.triggerNotification);
 </script>
 
 <template>
