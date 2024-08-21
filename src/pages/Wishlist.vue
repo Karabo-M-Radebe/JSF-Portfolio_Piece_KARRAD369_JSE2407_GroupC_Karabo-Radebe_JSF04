@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProductStore } from '../stores/productStore';
 import Filter from '../components/Filter.vue';
@@ -8,8 +8,37 @@ import Sort from '../components/Sort.vue';
 const productStore = useProductStore();
 const router = useRouter();
 
-// Computed property to get wishlist products from the store
-const wishlistProducts = computed(() => productStore.wishlist);
+const selectedCategory = ref('');
+const selectedSortOption = ref('default');
+
+// Computed property to get filtered and sorted wishlist products from the store
+const wishlistProducts = computed(() => {
+  let products = productStore.wishlist;
+
+  // Filter by selected category
+  if (selectedCategory.value) {
+    products = products.filter(product => product.category === selectedCategory.value);
+  }
+
+  // Sort by selected option
+  if (selectedSortOption.value === 'lowToHigh') {
+    products.sort((a, b) => a.price - b.price);
+  } else if (selectedSortOption.value === 'highToLow') {
+    products.sort((a, b) => b.price - a.price);
+  }
+
+  return products;
+});
+
+// Function to handle category change
+const handleCategoryChange = (category) => {
+  selectedCategory.value = category;
+};
+
+// Function to handle sort option change
+const handleSortChange = (option) => {
+  selectedSortOption.value = option;
+};
 
 // Function to remove from wishlist
 const removeFromWishlist = (id) => {
@@ -35,22 +64,24 @@ const viewDetails = (id) => {
 
 <template>
   <div>
-    <div class="container relative justify-center">
-      <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">Back</button>
+    <div class="container relative justify-center flex items-center space-x-4">
+      <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md">Back</button>
       <Filter
-        :categories="categories"
+        :categories="productStore.categories"
         :selectedCategory="selectedCategory"
         @categoryChange="handleCategoryChange"
       />
       <Sort 
-        :sortOptions="sortOptions"
+        :sortOptions="['default', 'lowToHigh', 'highToLow']"
         :selectedSortOption="selectedSortOption"
         @sortOptionChange="handleSortChange"
       />
     </div>
-    <div v-if="wishlistProducts.length === 0" class="text-center">
+
+    <div v-if="wishlistProducts.length === 0" class="text-center mt-4">
       <p>No products in the wishlist.</p>
     </div>
+
     <div v-else class="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-4">
       <div
         v-for="product in wishlistProducts"
@@ -156,4 +187,12 @@ const viewDetails = (id) => {
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Adjust spacing between filter and sort */
+  margin-top: 20px;
+}
+</style>
