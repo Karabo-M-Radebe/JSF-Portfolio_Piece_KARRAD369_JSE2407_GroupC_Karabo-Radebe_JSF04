@@ -14,7 +14,7 @@ export const useProductStore = defineStore('productStore', {
       currentSort: localStorage.getItem('currentSort') || 'default',
       category: null,
       sortOrder: 'asc',
-      notification: null, // State to hold the notification message
+      notification: "", // State to hold the notification message
     };
   },
 
@@ -139,8 +139,8 @@ export const useProductStore = defineStore('productStore', {
     triggerNotification(message) {
       this.notification = message;
       setTimeout(() => {
-        this.notification = null;
-      }, 4000); // Notification disappears after 4 seconds
+        this.notification = "";
+      }, 1000); // Notification disappears after 1 second
     }
   },
 
