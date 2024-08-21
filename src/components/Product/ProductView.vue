@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import ProductSkeleton from './ProductSkeleton.vue';
 import Error from '../Error.vue';
 import { useRoute } from 'vue-router';
+import { useProductStore } from '../../stores/productStore';
 
 const route = useRoute();
 const product = ref({});
