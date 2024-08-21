@@ -76,41 +76,41 @@ export const useProductStore = defineStore('productStore', {
         this.cart.push({ ...product, quantity: 1 });
       }
       this.updateLocalStorage('cart', this.cart);
-      this.triggerNotification('Product added to cart.');
+      this.triggerNotification('added to cart.');
     },
 
     removeFromCart(productId) {
       this.cart = this.cart.filter(item => item.id !== productId);
       this.updateLocalStorage('cart', this.cart);
-      this.triggerNotification('Product removed from cart.');
+      this.triggerNotification('removed from cart.');
     },
 
     addToWishlist(product) {
       if (!this.wishlist.some(item => item.id === product.id)) {
         this.wishlist.push(product);
         this.updateLocalStorage('wishlist', this.wishlist);
-        this.triggerNotification('Product added to wishlist.');
+        this.triggerNotification('added to wishlist.');
       }
     },
 
     removeFromWishlist(productId) {
       this.wishlist = this.wishlist.filter(item => item.id !== productId);
       this.updateLocalStorage('wishlist', this.wishlist);
-      this.triggerNotification('Product removed from wishlist.');
+      this.triggerNotification('removed from wishlist.');
     },
 
     addToCompare(product) {
       if (!this.compareProducts.some(item => item.id === product.id) && this.compareProducts.length < 5) {
         this.compareProducts.push(product);
         this.updateLocalStorage('compareProducts', this.compareProducts);
-        this.triggerNotification('Product added to comparison.');
+        this.triggerNotification('added to comparison.');
       }
     },
 
     removeFromCompare(productId) {
       this.compareProducts = this.compareProducts.filter(item => item.id !== productId);
       this.updateLocalStorage('compareProducts', this.compareProducts);
-      this.triggerNotification('Product removed from comparison.');
+      this.triggerNotification('removed from comparison.');
     },
 
     setSortOption(option) {
