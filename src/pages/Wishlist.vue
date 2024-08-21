@@ -1,6 +1,8 @@
 <script setup>
     import { ref } from 'vue';
     import { useRouter } from 'vue-router';
+    import Filter from '../components/Filter.vue'
+    import Sort from '../components/Sort.vue'
     
     const wishlistProducts = ref(JSON.parse(localStorage.getItem('wishlist')) || []);
     const router = useRouter();
@@ -37,9 +39,17 @@
 
 <template>
     <div>
-      <div class="container">
-        <Sort @sortOptionChange="handleSortChange" />
-        <Filter @categoryChange="handleCategoryChange" />
+      <div class="container relative justify-center">
+        <Filter
+          :categories="categories"
+          :selectedCategory="selectedCategory"
+          @categoryChange="handleCategoryChange"
+        />
+        <Sort 
+          :sortOptions="sortOptions"
+          :selectedSortOption="selectedSortOption"
+          @sortOptionChange="handleSortChange"
+        />
       </div>
       <div v-if="wishlistProducts.length === 0" class="text-center">
         <p>No products in the wishlist.</p>
