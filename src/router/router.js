@@ -26,7 +26,7 @@ const routes = [
     component: Comparison,
     meta: { requiresAuth: true }, // Protect Comparison
   },
-  { path: '/products', component: Cardview },
+  { path: '/products', component: CardView },
 ];
 
 const router = createRouter({
