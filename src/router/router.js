@@ -4,7 +4,7 @@ import ProductView from '../components/Product/ProductView.vue';
 import Login from '../pages/Login.vue';
 import Wishlist from '../pages/Wishlist.vue';
 import Cart from '../pages/Cart.vue';
-import CardView from '../components/Card/CardView.vue';
+import Cardview from '../components/Card/Cardview.vue';
 import Comparison from '../pages/Comparison.vue';
 
 const routes = [
@@ -26,7 +26,7 @@ const routes = [
     component: Comparison,
     meta: { requiresAuth: true }, // Protect Comparison
   },
-  { path: '/products', component: CardView },
+  { path: '/products', component: Cardview },
 ];
 
 const router = createRouter({
