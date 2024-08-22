@@ -7,18 +7,42 @@ import Cart from '../pages/Cart.vue';
 import Cardview from '../components/Card/Cardview.vue';
 import Comparison from '../pages/Comparison.vue';
 
+const routes = [
+  { path: '/', component: Home },
+  { path: '/products/:id', component: ProductView },
+  { path: '/login', component: Login },
+  {
+    path: '/wishlist',
+    component: Wishlist,
+    meta: { requiresAuth: true }, // Protect Wishlist
+  },
+  {
+    path: '/cart',
+    component: Cart,
+    meta: { requiresAuth: true }, // Protect Cart
+  },
+  {
+    path: '/comparison',
+    component: Comparison,
+    meta: { requiresAuth: true }, // Protect Comparison
+  },
+  { path: '/products', component: Cardview },
+];
+
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-      { path: '/', component: Home },
-      { path: '/products/:id', component: ProductView },
-      { path: '/login', component: Login},
-      { path: '/wishlist', component: Wishlist},
-      { path: '/cart', component: Cart},
-      { path: '/products', component: Cardview},
-      { path: '/comparison', component: Comparison}
+  routes,
+});
 
-  ]
+// Navigation Guard for Protected Routes
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('jwtToken'); // Check if the token exists
+
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/login'); // Redirect to login page if not authenticated
+  } else {
+    next(); // Proceed to the route
+  }
 });
 
 export default router;

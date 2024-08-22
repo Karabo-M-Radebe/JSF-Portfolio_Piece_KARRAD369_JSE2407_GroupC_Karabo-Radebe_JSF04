@@ -1,6 +1,7 @@
 // Store file: productStore.js
 import { defineStore } from 'pinia';
 import { useRouter } from 'vue-router';
+import { jwtDecode } from 'jwt-decode';
 
 export const useProductStore = defineStore('productStore', {
   state: () => ({
@@ -10,7 +11,8 @@ export const useProductStore = defineStore('productStore', {
     compareProducts: [],
     isAuthenticated: false,
     isNavbarVisible: false,
-    jwtToken: localStorage.getItem('jwtToken') || null,
+    jwtToken: localStorage.getItem('jwtToken') || "",
+    user: {},
     currentSort: localStorage.getItem('currentSort') || 'default',
     category: null,
     sortOrder: 'asc',
@@ -29,15 +31,21 @@ export const useProductStore = defineStore('productStore', {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
         });
-
+    
         const data = await response.json();
         if (data.token) {
           this.jwtToken = data.token;
-          localStorage.setItem('jwtToken', data.token);
+          localStorage.setItem('jwtToken', this.jwtToken); 
+
+          const decodedToken = jwtDecode(this.jwtToken)
+          this.user = decodedToken;
           this.isAuthenticated = true;
+
           this.triggerNotification('Login successful!');
-          const router = useRouter();
-          router.push('/');
+    
+          const router = useRouter()
+          const redirectTo = this.router.currentRoute.value.query.redirect || '/';
+          router.push(redirectTo); // Redirect to the intended page or home
         } else {
           throw new Error('Login failed.');
         }
@@ -49,7 +57,8 @@ export const useProductStore = defineStore('productStore', {
     },
 
     logout() {
-      this.jwtToken = null;
+      this.jwtToken = "";
+      this.user = {};
       localStorage.removeItem('jwtToken');
       this.isAuthenticated = false;
       this.triggerNotification('You have logged out.');
@@ -144,16 +153,15 @@ export const useProductStore = defineStore('productStore', {
   },
 
   getters: {
-    cartItemCount: (state) => 
-      state.cart.reduce((total, item) => total + item.quantity, 0),
+     cartItemCount: (state) => state.cart.reduce((total, item) => total + item.quantity, 0),
 
-    wishlistItemCount: (state) => state.wishlist.length,
+     wishlistItemCount: (state) => state.wishlist.length,
 
-    comparisonItemCount: (state) =>  state.compareProducts.length,
+     comparisonItemCount: (state) =>  state.compareProducts.length,
 
-    getCurrentSort: (state) => state.currentSort,
+     getCurrentSort: (state) => state.currentSort,
 
-    filteredProducts: (state) => {
+     filteredProducts: (state) => {
       let filtered = state.products;
 
       if (state.category) {
