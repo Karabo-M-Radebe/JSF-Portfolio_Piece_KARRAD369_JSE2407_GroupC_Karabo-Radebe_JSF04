@@ -65,6 +65,12 @@ const clearComparison = () => {
             </td>
           </tr>
           <tr>
+            <td class="py-2 px-4 border-b font-bold">Ratings</td>
+            <td v-for="product in compareProducts" :key="product.id + '-category'" class="py-2 px-4 border-b">
+              {{ product.rating.rate }} / 5
+            </td>
+          </tr>
+          <tr>
             <td class="py-2 px-4 border-b font-bold">Description</td>
             <td v-for="product in compareProducts" :key="product.id + '-description'" class="py-2 px-4 border-b">
               {{ product.description }}
