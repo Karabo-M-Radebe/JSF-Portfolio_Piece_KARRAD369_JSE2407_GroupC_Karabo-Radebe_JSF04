@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { jwtDecode } from 'jwt-decode';
+import { useProductStore } from '../stores/productStore';
 
 const username = ref('');
 const password = ref('');
@@ -9,8 +9,9 @@ const showPassword = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref('');
 const router = useRouter();
+const store = useProductStore();
 
-function validateInputs() {
+const validateInputs = () => {
   if (!username.value || !password.value) {
     errorMessage.value = 'Please enter both username and password';
     return false;
@@ -23,50 +24,30 @@ function togglePasswordVisibility() {
   showPassword.value = !showPassword.value;
 }
 
-function login() {
+const login = async() => {
   if (!validateInputs()) return;
-
   isLoading.value = true;
-  fetch('https://fakestoreapi.com/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      username: username.value,
-      password: password.value,
-    }),
-  })
-    .then(res => res.json())
-    .then(json => {
-      if (json.token) {
-        const decodedToken = jwtDecode(json.token);
-        localStorage.setItem('token', json.token);
 
-        const redirectTo = router.currentRoute.value.query.redirect || '/';
-        router.push(redirectTo);
-
-        username.value = '';
-        password.value = '';
-        errorMessage.value = '';
-      } else {
-        throw new Error('Login failed. Please check your credentials.');
-      }
-    })
-    .catch(err => {
-      errorMessage.value = err.message || 'An error occurred during login';
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
-}
-
-function logout() {
-  localStorage.removeItem('token');
-  router.push('/');
+  try {
+    await store.login(username.value, password.value, router); // Pass the router instance
+    if (store.isAuthenticated) {
+      const redirectTo = router.currentRoute.value.query.redirect || '/';
+      router.push(redirectTo);
+      username.value = '';
+      password.value = '';
+    } else {
+      errorMessage.value = 'Login failed. Please try again.';
+    }
+  } catch (err) {
+    errorMessage.value = err.message || 'An error occurred during login';
+  } finally {
+    isLoading.value = false; // Use isLoading.value instead of isLoading
+  }
 }
 </script>
 
 <template>
-  <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">back</button>
+  <button @click="$router.go(-1)" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">Back</button>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="bg-white p-6 rounded shadow-md w-full max-w-sm">
       <h1 class="text-2xl font-bold mb-4 text-center">Login Page</h1>
