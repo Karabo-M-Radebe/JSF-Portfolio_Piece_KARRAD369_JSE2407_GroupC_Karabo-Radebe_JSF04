@@ -89,7 +89,7 @@ const viewDetails = (id) => {
         class="relative flex flex-col max-h-[130rem] cursor-pointer max-w-80 hover:-translate-y-1 hover:scale-105 duration-300 bg-white border border-slate-200 shadow shadow-slate-950/5 rounded-2xl overflow-hidden"
       >
         <div class="absolute top-4 right-2">
-          <button @click="removeFromWishlist(product.id)" aria-label="Remove from Favourites">
+          <button>
             <svg
               class="me-1.5 h-5 w-5 fill-red-500"
               aria-hidden="true"
@@ -121,32 +121,37 @@ const viewDetails = (id) => {
             </header>
           </div>
           <div class="flex items-left -ml-2 mb-2">
-            <svg
-              v-for="index in Math.round(product.rating.rate)"
-              :key="index"
-              class="w-4 h-4 text-yellow-300 ms-1"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 22 20"
-            >
-              <path
-                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
-              />
-            </svg>
-            <svg
-              v-for="index in 5 - Math.round(product.rating.rate)"
-              :key="index"
-              class="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 22 20"
-            >
-              <path
-                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
-              />
-            </svg>
+            <template v-if="product.rating">
+              <svg
+                v-for="index in Math.round(product.rating.rate)"
+                :key="index"
+                class="w-4 h-4 text-yellow-300 ms-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 22 20"
+              >
+                <path
+                  d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
+                />
+              </svg>
+              <svg
+                v-for="index in 5 - Math.round(product.rating.rate)"
+                :key="index + 'empty'"
+                class="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 22 20"
+              >
+                <path
+                  d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
+                />
+              </svg>
+            </template>
+            <template v-else>
+              <span>No ratings available</span>
+            </template>
           </div>
           <div class="text-base line-clamp-2 font-extrabold text-slate-500 leading-snug">
             <h2>$ {{ product.price }}</h2>
@@ -166,6 +171,12 @@ const viewDetails = (id) => {
               class="flex rounded-lg justify-center bg-cyan-700 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-900 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300"
             >
               Add To Cart
+            </button>
+            <button
+            @click="removeFromWishlist(product.id)" aria-label="Remove from Favourites"
+              class="flex rounded-lg justify-center bg-green-500 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-900 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300"
+            >
+              Remove from wishlist 
             </button>
             <a :href="`/products/${product.id}`">
               <button class="flex rounded-lg justify-center bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300">
@@ -192,7 +203,7 @@ const viewDetails = (id) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* Adjust spacing between filter and sort */
+  gap: 20px;
   margin-top: 20px;
 }
 </style>
