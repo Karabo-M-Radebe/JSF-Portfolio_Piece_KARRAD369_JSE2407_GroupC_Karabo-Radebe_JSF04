@@ -10,9 +10,9 @@ const message = computed(() => productStore.notification);
   <transition name="fade">
     <div
       v-if="message"
-      class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
+      class="fixed top-40% left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
     >
-      <span class="text-white bg-red-500 px-4 py-2 rounded-md">
+      <span class="text-black bg-gray-500 px-4 py-2 rounded-md">
         {{ message }}
       </span>
     </div>
